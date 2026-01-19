@@ -1,0 +1,9 @@
+{
+  "icon-paused": "",
+  "icon-unpaused": "",
+  "icon-error": "",
+  "format-paused": "{icon} ({waiting_count})",
+  "format-unpaused": "{icon}",
+  "tooltip-format-paused": "FA Paused: {waiting_count}",
+  "tooltip-format-unpaused": "FA Active"
+}

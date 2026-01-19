@@ -1,0 +1,13 @@
+{
+  "icon-paused": "🔕",
+  "icon-unpaused": "🔔",
+  "icon-error": "🛑",
+  "format-paused": "{icon} {waiting_count}",
+  "format-unpaused": "{icon}",
+  "format-error": "{icon}",
+  "tooltip-format-paused": "Notifications paused ({waiting_count} waiting)",
+  "tooltip-format-unpaused": "Notifications active",
+  "tooltip-format-error": "Dunst is not running",
+  "show-waiting-count": true,
+  "waiting-length-max": 9
+}

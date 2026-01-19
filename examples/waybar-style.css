@@ -1,0 +1,86 @@
+/* Styling for dunst-waybar custom module */
+
+#custom-dunst {
+  padding: 0 10px;
+  margin: 0 5px;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+/* Unpaused state - notifications are active (green) */
+#custom-dunst.unpaused {
+  color: #a6e3a1;
+  background: rgba(166, 227, 161, 0.1);
+}
+
+/* Paused state - notifications are paused (red/pink) */
+#custom-dunst.paused {
+  color: #f38ba8;
+  background: rgba(243, 139, 168, 0.1);
+}
+
+/* Error state - dunst is not running (red with darker background) */
+#custom-dunst.error {
+  color: #f38ba8;
+  background: rgba(243, 139, 168, 0.2);
+  border: 1px solid #f38ba8;
+}
+
+/* Hover effect */
+#custom-dunst:hover {
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+/* Alternative color schemes - uncomment to use */
+
+/* Catppuccin Mocha theme */
+/*
+#custom-dunst.unpaused {
+  color: #a6e3a1;
+  background: #1e1e2e;
+}
+
+#custom-dunst.paused {
+  color: #f38ba8;
+  background: #1e1e2e;
+}
+
+#custom-dunst.error {
+  color: #f38ba8;
+  background: #1e1e2e;
+}
+*/
+
+/* Minimal monochrome theme */
+/*
+#custom-dunst {
+  color: #ffffff;
+  background: transparent;
+}
+
+#custom-dunst.paused {
+  color: #ff6b6b;
+}
+
+#custom-dunst.error {
+  color: #cc0000;
+}
+*/
+
+/* Material Design theme */
+/*
+#custom-dunst.unpaused {
+  color: #4caf50;
+}
+
+#custom-dunst.paused {
+  color: #f44336;
+}
+
+#custom-dunst.error {
+  color: #ff5252;
+  background: rgba(255, 82, 82, 0.1);
+}
+*/

@@ -1,0 +1,150 @@
+version: '3'
+
+vars:
+  BINARY_NAME: dunst-waybar
+  INSTALL_PATH: /usr/local/bin
+  CONFIG_EXAMPLE_PATH: /usr/local/share/dunst-waybar/examples
+
+tasks:
+  default:
+    desc: Build the binary
+    cmds:
+      - task: build
+
+  build:
+    desc: Build the dunst-waybar binary
+    cmds:
+      - go build -o {{.BINARY_NAME}} ./cmd/dunst-waybar
+    sources:
+      - cmd/**/*.go
+      - internal/**/*.go
+      - go.mod
+      - go.sum
+    generates:
+      - "{{.BINARY_NAME}}"
+
+  clean:
+    desc: Remove build artifacts
+    cmds:
+      - rm -f {{.BINARY_NAME}}
+      - go clean
+
+  install:
+    desc: Install the binary and example configs system-wide
+    deps: [build]
+    cmds:
+      - install -Dm755 {{.BINARY_NAME}} {{.INSTALL_PATH}}/{{.BINARY_NAME}}
+      - install -Dm644 examples/dunst-waybar.json {{.CONFIG_EXAMPLE_PATH}}/dunst-waybar.json
+      - install -Dm644 examples/waybar-config.json {{.CONFIG_EXAMPLE_PATH}}/waybar-config.json
+      - install -Dm644 examples/waybar-style.css {{.CONFIG_EXAMPLE_PATH}}/waybar-style.css
+      - |
+        echo ""
+        echo "Installation complete!"
+        echo ""
+        echo "Next steps:"
+        echo "  1. (Optional) Copy example config:"
+        echo "     mkdir -p ~/.config/waybar"
+        echo "     cp {{.CONFIG_EXAMPLE_PATH}}/dunst-waybar.json ~/.config/waybar/"
+        echo ""
+        echo "  2. Add to your waybar config (~/.config/waybar/config):"
+        echo "     See {{.CONFIG_EXAMPLE_PATH}}/waybar-config.json"
+        echo ""
+        echo "  3. Add CSS styling (~/.config/waybar/style.css):"
+        echo "     See {{.CONFIG_EXAMPLE_PATH}}/waybar-style.css"
+        echo ""
+        echo "  4. Restart waybar"
+        echo ""
+
+  uninstall:
+    desc: Uninstall the binary and example configs
+    cmds:
+      - rm -f {{.INSTALL_PATH}}/{{.BINARY_NAME}}
+      - rm -rf {{.CONFIG_EXAMPLE_PATH}}
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test -v ./...
+
+  run:
+    desc: Build and run the binary
+    deps: [build]
+    cmds:
+      - ./{{.BINARY_NAME}}
+
+  fmt:
+    desc: Format Go code
+    cmds:
+      - go fmt ./...
+
+  vet:
+    desc: Run go vet
+    cmds:
+      - go vet ./...
+
+  lint:
+    desc: Run go fmt, vet, and check for issues
+    deps: [fmt, vet]
+    cmds:
+      - echo "Linting complete"
+
+  tidy:
+    desc: Tidy go modules
+    cmds:
+      - go mod tidy
+
+  test-coverage:
+    desc: Run tests with coverage report
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -func=coverage.out
+      - echo ""
+      - echo "For HTML report run task test-coverage-html"
+
+  test-coverage-html:
+    desc: Generate HTML coverage report
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out -o coverage.html
+      - echo "Coverage report generated in coverage.html"
+      - echo "Open with xdg-open coverage.html"
+
+  test-race:
+    desc: Run tests with race detector
+    cmds:
+      - go test -race ./...
+
+  test-short:
+    desc: Run tests without slow tests
+    cmds:
+      - go test -short ./...
+
+  test-verbose:
+    desc: Run tests with verbose output
+    cmds:
+      - go test -v ./...
+
+  test-integration:
+    desc: Run integration tests with testcontainers
+    cmds:
+      - go test -tags=integration -v ./test/integration/...
+
+  test-integration-podman:
+    desc: Run integration tests with Podman
+    cmds:
+      - |
+        if [ ! -S "/run/user/$UID/podman/podman.sock" ]; then
+          echo "Error: Podman socket not found. Starting it..."
+          systemctl --user start podman.socket
+          sleep 2
+        fi
+      - |
+        export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
+        echo "Using Podman socket: $DOCKER_HOST"
+        go test -tags=integration -v ./test/integration/...
+
+  test-all:
+    desc: Run all tests (unit + integration)
+    cmds:
+      - task: test
+      - task: test-integration
