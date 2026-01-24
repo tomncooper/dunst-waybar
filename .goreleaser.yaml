@@ -12,7 +12,7 @@ before:
 
 builds:
   - id: dunst-waybar
-    main: ./cmd/dunst-waybar/main.go
+    main: ./cmd/dunst-waybar
     binary: dunst-waybar
     env:
       - CGO_ENABLED=0
