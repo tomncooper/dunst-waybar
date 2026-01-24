@@ -27,3 +27,13 @@ go.work
 # OS
 .DS_Store
 Thumbs.db
+
+# GoReleaser artifacts
+dist/
+
+# Test coverage
+coverage.out
+coverage.html
+
+# Task runner cache
+.task/

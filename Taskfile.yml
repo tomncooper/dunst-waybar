@@ -148,3 +148,72 @@ tasks:
     cmds:
       - task: test
       - task: test-integration
+
+  # Release tasks
+  release-check:
+    desc: Check if ready to release (runs tests and builds)
+    cmds:
+      - task: lint
+      - task: test
+      - task: build
+      - echo "✓ Release checks passed!"
+
+  release-snapshot:
+    desc: Build a snapshot release (doesn't publish)
+    cmds:
+      - |
+        if ! command -v goreleaser &> /dev/null; then
+          echo "Error: goreleaser is not installed"
+          echo "Install with: go install github.com/goreleaser/goreleaser/v2@latest"
+          exit 1
+        fi
+      - goreleaser release --snapshot --clean --skip=publish
+      - |
+        echo ""
+        echo "Snapshot build complete! Check the dist/ directory."
+
+  release-test:
+    desc: Test the release process without publishing
+    cmds:
+      - |
+        if ! command -v goreleaser &> /dev/null; then
+          echo "Error: goreleaser is not installed"
+          echo "Install with: go install github.com/goreleaser/goreleaser/v2@latest"
+          exit 1
+        fi
+      - goreleaser release --snapshot --clean --skip=publish
+      - |
+        echo ""
+        echo "Release test complete! Artifacts in dist/ directory."
+        echo ""
+        echo "To publish a real release:"
+        echo "  1. Commit all changes"
+        echo "  2. Create and push a tag: git tag -a v1 -m 'Release v1'"
+        echo "  3. Push the tag: git push origin v1"
+        echo "  4. GitHub Actions will automatically build and publish the release"
+
+  release-local:
+    desc: Build release locally (requires goreleaser and GITHUB_TOKEN)
+    cmds:
+      - |
+        if ! command -v goreleaser &> /dev/null; then
+          echo "Error: goreleaser is not installed"
+          echo "Install with: go install github.com/goreleaser/goreleaser/v2@latest"
+          exit 1
+        fi
+      - |
+        if [ -z "$GITHUB_TOKEN" ]; then
+          echo "Error: GITHUB_TOKEN environment variable not set"
+          echo "Get a token from: https://github.com/settings/tokens"
+          exit 1
+        fi
+      - goreleaser release --clean
+      - |
+        echo ""
+        echo "Release published!"
+
+  release-clean:
+    desc: Clean release artifacts
+    cmds:
+      - rm -rf dist/
+      - echo "Release artifacts cleaned"

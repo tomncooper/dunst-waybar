@@ -1,0 +1,174 @@
+# GoReleaser configuration for dunst-waybar
+# Documentation: https://goreleaser.com
+
+version: 2
+
+before:
+  hooks:
+    # Run go mod tidy to ensure dependencies are up to date
+    - go mod tidy
+    # Run tests before building
+    - go test ./...
+
+builds:
+  - id: dunst-waybar
+    main: ./cmd/dunst-waybar/main.go
+    binary: dunst-waybar
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "6"
+      - "7"
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+      - -X main.builtBy=goreleaser
+    mod_timestamp: '{{ .CommitTimestamp }}'
+
+archives:
+  - id: dunst-waybar
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    files:
+      - LICENSE
+      - README.md
+      - examples/*
+
+nfpms:
+  - id: dunst-waybar
+    package_name: dunst-waybar
+    vendor: Tom Cooper
+    homepage: https://github.com/tomncooper/dunst-waybar
+    maintainer: Tom Cooper <tomncooper@users.noreply.github.com>
+    description: |-
+      Custom Waybar module for Dunst notification daemon integration.
+      Provides real-time notification status display in Waybar through D-Bus integration.
+    license: MIT
+    formats:
+      - rpm
+      - deb
+      - apk
+    bindir: /usr/bin
+    
+    # Package dependencies
+    dependencies:
+      - dunst
+    
+    # Recommended packages
+    recommends:
+      - waybar
+    
+    # Files to include in the package
+    contents:
+      # Documentation
+      - src: LICENSE
+        dst: /usr/share/doc/dunst-waybar/LICENSE
+      - src: README.md
+        dst: /usr/share/doc/dunst-waybar/README.md
+      
+      # Example configurations
+      - src: examples/dunst-waybar.json
+        dst: /usr/share/doc/dunst-waybar/examples/dunst-waybar.json
+      - src: examples/waybar-config.json
+        dst: /usr/share/doc/dunst-waybar/examples/waybar-config.json
+      - src: examples/waybar-style.css
+        dst: /usr/share/doc/dunst-waybar/examples/waybar-style.css
+    
+    # RPM-specific configuration
+    rpm:
+      group: Applications/Internet
+      compression: lzma
+      
+    # DEB-specific configuration
+    deb:
+      lintian_overrides:
+        - statically-linked-binary
+      compression: xz
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - '^ci:'
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: 'Performance improvements'
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: Others
+      order: 999
+
+release:
+  github:
+    owner: tomncooper
+    name: dunst-waybar
+  draft: false
+  prerelease: auto
+  mode: append
+  header: |
+    ## dunst-waybar {{ .Tag }}
+    
+    Release of dunst-waybar {{ .Tag }}.
+    
+    ### Installation
+    
+    #### From Binary
+    Download the appropriate archive for your system and extract it:
+    ```bash
+    tar xzf dunst-waybar_{{ .Version }}_Linux_x86_64.tar.gz
+    sudo install -Dm755 dunst-waybar /usr/local/bin/dunst-waybar
+    ```
+    
+    #### From RPM (Fedora/RHEL/CentOS)
+    ```bash
+    sudo rpm -i dunst-waybar_{{ .Version }}_linux_amd64.rpm
+    ```
+    
+    #### From DEB (Debian/Ubuntu)
+    ```bash
+    sudo dpkg -i dunst-waybar_{{ .Version }}_linux_amd64.deb
+    ```
+    
+    ### Configuration
+    See the [README](https://github.com/tomncooper/dunst-waybar#configuration) for configuration instructions.
+  footer: |
+    **Full Changelog**: https://github.com/tomncooper/dunst-waybar/compare/{{ .PreviousTag }}...{{ .Tag }}
+    
+    ---
+    
+    Binary checksums are available in `checksums.txt`.
+
+# Announce releases (optional - requires additional setup)
+# announce:
+#   twitter:
+#     enabled: false

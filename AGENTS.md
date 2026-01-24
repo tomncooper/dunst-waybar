@@ -63,6 +63,40 @@ task run
 task clean
 ```
 
+### Release Management
+
+The project uses **GoReleaser** for automated releases with GitHub Actions:
+
+```bash
+# Test the release configuration locally
+task release-test
+
+# Build a snapshot release (no publishing)
+task release-snapshot
+
+# Check if ready to release (runs tests and builds)
+task release-check
+
+# Clean release artifacts
+task release-clean
+```
+
+**Creating a Release:**
+1. Ensure all tests pass: `task release-check`
+2. Test locally (optional): `task release-snapshot`
+3. Create and push an annotated tag: `git tag -a v1 -m "Release v1" && git push origin v1`
+4. GitHub Actions automatically builds and publishes the release
+
+**Release Artifacts Generated:**
+- Multi-platform binaries (Linux amd64, arm64, arm)
+- RPM packages (Fedora/RHEL/CentOS)
+- DEB packages (Debian/Ubuntu)
+- APK packages (Alpine Linux)
+- Archives with documentation and examples
+- SHA256 checksums
+
+See `RELEASE.md` for detailed release process documentation.
+
 ### Using Go Directly
 
 ```bash
@@ -155,6 +189,18 @@ task tidy
 # or
 go mod tidy
 ```
+
+### Pre-Release Checks
+
+Before creating a release, run:
+```bash
+task release-check
+```
+
+This ensures:
+- Code is formatted correctly (`task lint`)
+- All unit tests pass (`task test`)
+- Binary builds successfully (`task build`)
 
 ### Code Standards
 - Follow standard Go formatting (enforced by `go fmt`)
@@ -272,11 +318,55 @@ dbus-monitor "type='signal',interface='org.freedesktop.DBus.Properties'"
 5. **Configuration Optional**: The application works with defaults if no config file exists.
 6. **Testing**: Always run unit tests. Integration tests require Docker/Podman.
 7. **Build Tool**: Use Task for consistent builds across environments.
+8. **Releases**: Use GoReleaser for releases - GitHub Actions automates the entire process when tags are pushed.
+9. **Versioning**: The project uses monotonic versioning (v1, v2, v3...) - simpler than semantic versioning.
+
+## GoReleaser Configuration
+
+The project uses GoReleaser for automated releases:
+
+### Configuration Files
+- **`.goreleaser.yaml`** - Main GoReleaser configuration
+- **`.github/workflows/release.yml`** - GitHub Actions workflow for automated releases
+- **`RELEASE.md`** - Detailed release process documentation
+
+### Key GoReleaser Features
+1. **Multi-platform Builds**: Automatic cross-compilation for Linux (amd64, arm64, arm)
+2. **Package Generation**: Creates RPM, DEB, and APK packages with proper metadata
+3. **Archive Creation**: Bundles binaries with LICENSE, README, AGENTS.md, and examples
+4. **Changelog Generation**: Auto-generates changelogs from conventional commits
+5. **GitHub Integration**: Automatically creates GitHub releases with all artifacts
+6. **Pre-release Hooks**: Runs `go mod tidy` and tests before building
+7. **Build Metadata**: Injects version, commit, and build date into binaries
+
+### Release Workflow
+1. **Local Testing**: Use `task release-snapshot` or `task release-test` to verify configuration
+2. **Tag Creation**: Push an annotated tag (e.g., `v1`, `v2`) to trigger release
+3. **Automated Build**: GitHub Actions runs GoReleaser on tag push
+4. **Artifact Publishing**: All binaries, packages, and checksums uploaded to GitHub Release
+
+### Package Configuration
+GoReleaser packages include:
+- **Dependencies**: `dunst` (required)
+- **Recommendations**: `waybar` (recommended)
+- **Documentation**: Installed to `/usr/share/doc/dunst-waybar/`
+- **Examples**: Installed to `/usr/share/doc/dunst-waybar/examples/`
+- **Binary**: Installed to `/usr/bin/dunst-waybar`
+
+### Making Changes to Releases
+- Modify `.goreleaser.yaml` for build configuration, package metadata, or file inclusion
+- Update GitHub Actions workflow in `.github/workflows/release.yml` for CI/CD changes
+- Test locally with `task release-snapshot` before pushing tags
+- See `RELEASE.md` for complete workflow documentation
 
 ## References
 
 - Main documentation: [README.md](README.md)
 - Implementation notes: [IMPLEMENTATION.md](IMPLEMENTATION.md)
+- Release process: [RELEASE.md](RELEASE.md)
+- GoReleaser config: [.goreleaser.yaml](.goreleaser.yaml)
+- GitHub Actions workflow: [.github/workflows/release.yml](.github/workflows/release.yml)
 - Example configs: [examples/](examples/)
 - Waybar custom module docs: https://github.com/Alexays/Waybar/wiki/Module:-Custom
 - Dunst D-Bus interface: https://github.com/dunst-project/dunst
+- GoReleaser documentation: https://goreleaser.com/

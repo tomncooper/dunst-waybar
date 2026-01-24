@@ -8,11 +8,39 @@ It uses efficient D-Bus signal-based communication for instant updates without p
 
 ## Installation
 
-**Prerequisites:** Go 1.21+, Dunst, Waybar, D-Bus session bus
+**Prerequisites:** Dunst, Waybar, D-Bus session bus
 
-**From source:**
+### From Pre-built Packages (Recommended)
+
+Download the latest release from the [releases page](https://github.com/tomncooper/dunst-waybar/releases).
+
+#### RPM (Fedora/RHEL/CentOS/AlmaLinux)
 ```bash
-git clone https://github.com/tcooper/dunst-waybar.git
+sudo rpm -i dunst-waybar_*.rpm
+```
+
+#### DEB (Debian/Ubuntu)
+```bash
+sudo dpkg -i dunst-waybar_*.deb
+```
+
+#### APK (Alpine Linux)
+```bash
+sudo apk add --allow-untrusted dunst-waybar_*.apk
+```
+
+#### Binary Archive
+```bash
+tar xzf dunst-waybar_*_Linux_x86_64.tar.gz
+sudo install -Dm755 dunst-waybar /usr/local/bin/dunst-waybar
+```
+
+### From Source
+
+**Prerequisites:** Go 1.21+
+
+```bash
+git clone https://github.com/tomncooper/dunst-waybar.git
 cd dunst-waybar
 go build -o dunst-waybar ./cmd/dunst-waybar
 sudo install -Dm755 dunst-waybar /usr/local/bin/dunst-waybar
@@ -98,6 +126,10 @@ task lint   # Run both fmt and vet
 **Contributing:**
 
 Contributions are welcome! Please fork the repository, create a feature branch, test your changes, and submit a pull request. Ensure all tests pass and code is formatted with `go fmt`.
+
+## Releases
+
+For maintainers: See [RELEASE.md](RELEASE.md) for the release process.
 
 ## License
 
