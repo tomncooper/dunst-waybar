@@ -14,7 +14,7 @@ import (
 
 var (
 	configPath = flag.String("config", "", "Path to config file (default: $XDG_CONFIG_HOME/waybar/dunst-waybar.json)")
-	count      = flag.Int("count", 0, "Number of notifications to show (default: from config or 10)")
+	count      = flag.Int("count", 0, "Number of notifications to show (0 = all, default: from config or 0)")
 	menuTool   = flag.String("menu-tool", "", "Menu tool to use: rofi, wofi, or dmenu (default: auto-detect)")
 	version    = flag.Bool("version", false, "Print version information")
 )

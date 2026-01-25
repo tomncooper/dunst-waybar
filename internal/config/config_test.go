@@ -51,8 +51,8 @@ func TestDefault(t *testing.T) {
 	}
 
 	// Test history defaults
-	if cfg.History.Count != 10 {
-		t.Errorf("History.Count: got %d, want %d", cfg.History.Count, 10)
+	if cfg.History.Count != 0 {
+		t.Errorf("History.Count: got %d, want %d", cfg.History.Count, 0)
 	}
 	if cfg.History.Format != "{time} {summary}" {
 		t.Errorf("History.Format: got %q, want %q", cfg.History.Format, "{time} {summary}")

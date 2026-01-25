@@ -104,7 +104,7 @@ The `dunst-waybar-history` command provides an interactive notification history 
 dunst-waybar-history [OPTIONS]
 
 Options:
-  --count N          Number of notifications to show (default: from config or 10)
+  --count N          Number of notifications to show (0 = all, default: from config or 0)
   --menu-tool TOOL   Menu tool to use: rofi, wofi, or dmenu (default: auto-detect)
   --config PATH      Path to config file
   --version          Print version information
@@ -114,7 +114,7 @@ Options:
 ```json
 {
   "history": {
-    "count": 10,
+    "count": 0,
     "format": "{time} {summary}",
     "menu-tool": "auto",
     "time-format": "relative",

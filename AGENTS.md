@@ -235,7 +235,7 @@ The configuration is defined in `internal/config/` package and includes:
 - Display options (show-waiting-count, waiting-length-max)
 
 **History Module:**
-- `count` - Number of notifications to show (default: 10)
+- `count` - Number of notifications to show (0 = show all, default: 0)
 - `format` - Format template with variables: `{icon}`, `{summary}`, `{body}`, `{appname}`, `{urgency}`, `{time}`, `{id}`
 - `menu-tool` - Menu tool preference: "auto", "rofi", "wofi", or "dmenu" (default: "auto")
 - `time-format` - "relative" or "absolute" (default: "relative")

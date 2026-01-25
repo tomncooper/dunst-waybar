@@ -48,7 +48,7 @@ func Default() *Config {
 		ShowWaitingCount: true,
 		WaitingLengthMax: 9,
 		History: HistoryConfig{
-			Count:             10,
+			Count:             0,
 			Format:            "{time} {summary}",
 			MenuTool:          "auto",
 			TimeFormat:        "relative",
