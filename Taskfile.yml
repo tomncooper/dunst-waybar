@@ -2,6 +2,7 @@ version: '3'
 
 vars:
   BINARY_NAME: dunst-waybar
+  HISTORY_BINARY_NAME: dunst-waybar-history
   INSTALL_PATH: /usr/local/bin
   CONFIG_EXAMPLE_PATH: /usr/local/share/dunst-waybar/examples
 
@@ -12,9 +13,10 @@ tasks:
       - task: build
 
   build:
-    desc: Build the dunst-waybar binary
+    desc: Build the dunst-waybar binaries
     cmds:
       - go build -o {{.BINARY_NAME}} ./cmd/dunst-waybar
+      - go build -o {{.HISTORY_BINARY_NAME}} ./cmd/dunst-waybar-history
     sources:
       - cmd/**/*.go
       - internal/**/*.go
@@ -22,18 +24,20 @@ tasks:
       - go.sum
     generates:
       - "{{.BINARY_NAME}}"
+      - "{{.HISTORY_BINARY_NAME}}"
 
   clean:
     desc: Remove build artifacts
     cmds:
-      - rm -f {{.BINARY_NAME}}
+      - rm -f {{.BINARY_NAME}} {{.HISTORY_BINARY_NAME}}
       - go clean
 
   install:
-    desc: Install the binary and example configs system-wide
+    desc: Install the binaries and example configs system-wide
     deps: [build]
     cmds:
       - install -Dm755 {{.BINARY_NAME}} {{.INSTALL_PATH}}/{{.BINARY_NAME}}
+      - install -Dm755 {{.HISTORY_BINARY_NAME}} {{.INSTALL_PATH}}/{{.HISTORY_BINARY_NAME}}
       - install -Dm644 examples/dunst-waybar.json {{.CONFIG_EXAMPLE_PATH}}/dunst-waybar.json
       - install -Dm644 examples/waybar-config.json {{.CONFIG_EXAMPLE_PATH}}/waybar-config.json
       - install -Dm644 examples/waybar-style.css {{.CONFIG_EXAMPLE_PATH}}/waybar-style.css
@@ -56,9 +60,9 @@ tasks:
         echo ""
 
   uninstall:
-    desc: Uninstall the binary and example configs
+    desc: Uninstall the binaries and example configs
     cmds:
-      - rm -f {{.INSTALL_PATH}}/{{.BINARY_NAME}}
+      - rm -f {{.INSTALL_PATH}}/{{.BINARY_NAME}} {{.INSTALL_PATH}}/{{.HISTORY_BINARY_NAME}}
       - rm -rf {{.CONFIG_EXAMPLE_PATH}}
 
   test:

@@ -4,6 +4,7 @@ Inspired by [waybar-dunst](https://github.com/CelDaemon/waybar-dunst)
 
 A custom Waybar module for Dunst notification daemon integration, written in Go. 
 This module displays the current notification state (paused/unpaused) and the number of waiting notifications directly in your Waybar. 
+It includes a companion history browser (`dunst-waybar-history`) for browsing recent notifications interactively.
 It uses efficient D-Bus signal-based communication for instant updates without polling, and supports customizable icons, formats, and click actions through a simple JSON configuration file.
 
 ## Installation
@@ -43,7 +44,9 @@ sudo install -Dm755 dunst-waybar /usr/local/bin/dunst-waybar
 git clone https://github.com/tomncooper/dunst-waybar.git
 cd dunst-waybar
 go build -o dunst-waybar ./cmd/dunst-waybar
+go build -o dunst-waybar-history ./cmd/dunst-waybar-history
 sudo install -Dm755 dunst-waybar /usr/local/bin/dunst-waybar
+sudo install -Dm755 dunst-waybar-history /usr/local/bin/dunst-waybar-history
 ```
 
 Or using [Task](https://taskfile.dev):
@@ -62,11 +65,17 @@ Add the module to `~/.config/waybar/config`:
     "exec": "/usr/local/bin/dunst-waybar",
     "return-type": "json",
     "on-click": "dunstctl set-paused toggle",
+    "on-click-middle": "dunst-waybar-history",
     "on-click-right": "dunstctl history-pop",
     "tooltip": true
   }
 }
 ```
+
+**Click Actions:**
+- **Left click**: Toggle notification pause state
+- **Middle click**: Show notification history browser (requires rofi/wofi/dmenu)
+- **Right click**: Pop last notification from history
 
 Add styling to `~/.config/waybar/style.css`:
 ```css
@@ -79,6 +88,50 @@ Restart Waybar:
 ```bash
 killall waybar && waybar &
 ```
+
+## Notification History
+
+The `dunst-waybar-history` command provides an interactive notification history browser. Middle-click the Waybar module to view recent notifications in a menu (rofi/wofi/dmenu).
+
+**Features:**
+- Browse last N notifications (default: 10, configurable)
+- Selectable menu with customizable format
+- Auto-detects available menu tool (rofi → wofi → dmenu)
+- Clicking a notification re-displays it or executes its action
+
+**Command-line options:**
+```bash
+dunst-waybar-history [OPTIONS]
+
+Options:
+  --count N          Number of notifications to show (default: from config or 10)
+  --menu-tool TOOL   Menu tool to use: rofi, wofi, or dmenu (default: auto-detect)
+  --config PATH      Path to config file
+  --version          Print version information
+```
+
+**Configuration** (add to `~/.config/waybar/dunst-waybar.json`):
+```json
+{
+  "history": {
+    "count": 10,
+    "format": "{time} {summary}",
+    "menu-tool": "auto",
+    "time-format": "relative",
+    "max-line-length": 100,
+    "truncate-suffix": "..."
+  }
+}
+```
+
+**Format variables:**
+- `{time}` - Time since notification (e.g., "2m ago", "1h ago", "3d ago")
+- `{icon}` - Icon based on urgency (🔔 normal, 🚨 critical, ℹ️ low)
+- `{summary}` - Notification summary text
+- `{body}` - Notification body
+- `{appname}` - Application name
+- `{urgency}` - LOW, NORMAL, or CRITICAL
+- `{id}` - Notification ID
 
 ## Customization
 
@@ -96,7 +149,15 @@ Configuration is optional. Create `$XDG_CONFIG_HOME/waybar/dunst-waybar.json` to
   "tooltip-format-unpaused": "Notifications active",
   "tooltip-format-error": "Dunst is not running",
   "show-waiting-count": true,
-  "waiting-length-max": 9
+  "waiting-length-max": 9,
+  "history": {
+    "count": 10,
+    "format": "{time} {summary}",
+    "menu-tool": "auto",
+    "time-format": "relative",
+    "max-line-length": 100,
+    "truncate-suffix": "..."
+  }
 }
 ```
 

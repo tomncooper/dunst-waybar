@@ -1,0 +1,239 @@
+{
+	"type" : "aa{sv}",
+	"data" : [
+		[
+			{
+				"body" : {
+					"type" : "s",
+					"data" : "Synology Drive Client is running."
+				},
+				"message" : {
+					"type" : "s",
+					"data" : "cloud-drive-ui\n<b>Running</b>\nSynology Drive Client is running."
+				},
+				"summary" : {
+					"type" : "s",
+					"data" : "Running"
+				},
+				"appname" : {
+					"type" : "s",
+					"data" : "cloud-drive-ui"
+				},
+				"category" : {
+					"type" : "s",
+					"data" : ""
+				},
+				"default_action_name" : {
+					"type" : "s",
+					"data" : "default"
+				},
+				"icon_path" : {
+					"type" : "s",
+					"data" : "/usr/share/icons/breeze-dark/status/64/dialog-information.svg"
+				},
+				"id" : {
+					"type" : "i",
+					"data" : 5
+				},
+				"timestamp" : {
+					"type" : "x",
+					"data" : 34300328
+				},
+				"timeout" : {
+					"type" : "x",
+					"data" : 5000000
+				},
+				"progress" : {
+					"type" : "i",
+					"data" : -1
+				},
+				"urgency" : {
+					"type" : "s",
+					"data" : "NORMAL"
+				},
+				"stack_tag" : {
+					"type" : "s",
+					"data" : ""
+				},
+				"urls" : {
+					"type" : "s",
+					"data" : ""
+				}
+			},
+			{
+				"body" : {
+					"type" : "s",
+					"data" : "raop_sink.Sonos-C438752635A2.local.192.168.1.46.7000"
+				},
+				"message" : {
+					"type" : "s",
+					"data" : "pasystray\n<b>New sink &quot;Move&quot;</b>\nraop_sink.Sonos-C438752635A2.local.192.168.1.46.7000"
+				},
+				"summary" : {
+					"type" : "s",
+					"data" : "New sink \"Move\""
+				},
+				"appname" : {
+					"type" : "s",
+					"data" : "pasystray"
+				},
+				"category" : {
+					"type" : "s",
+					"data" : ""
+				},
+				"default_action_name" : {
+					"type" : "s",
+					"data" : "default"
+				},
+				"icon_path" : {
+					"type" : "s",
+					"data" : "/usr/share/icons/breeze-dark/devices/64/audio-card.svg"
+				},
+				"id" : {
+					"type" : "i",
+					"data" : 4
+				},
+				"timestamp" : {
+					"type" : "x",
+					"data" : 33762687
+				},
+				"timeout" : {
+					"type" : "x",
+					"data" : 2000000
+				},
+				"progress" : {
+					"type" : "i",
+					"data" : -1
+				},
+				"urgency" : {
+					"type" : "s",
+					"data" : "LOW"
+				},
+				"stack_tag" : {
+					"type" : "s",
+					"data" : ""
+				},
+				"urls" : {
+					"type" : "s",
+					"data" : ""
+				}
+			},
+			{
+				"body" : {
+					"type" : "s",
+					"data" : "raop_sink.Sonos-38420B39A718.local.192.168.1.110.7000"
+				},
+				"message" : {
+					"type" : "s",
+					"data" : "pasystray\n<b>New sink &quot;Roam&quot;</b>\nraop_sink.Sonos-38420B39A718.local.192.168.1.110.7000"
+				},
+				"summary" : {
+					"type" : "s",
+					"data" : "New sink \"Roam\""
+				},
+				"appname" : {
+					"type" : "s",
+					"data" : "pasystray"
+				},
+				"category" : {
+					"type" : "s",
+					"data" : ""
+				},
+				"default_action_name" : {
+					"type" : "s",
+					"data" : "default"
+				},
+				"icon_path" : {
+					"type" : "s",
+					"data" : "/usr/share/icons/breeze-dark/devices/64/audio-card.svg"
+				},
+				"id" : {
+					"type" : "i",
+					"data" : 3
+				},
+				"timestamp" : {
+					"type" : "x",
+					"data" : 33752664
+				},
+				"timeout" : {
+					"type" : "x",
+					"data" : 2000000
+				},
+				"progress" : {
+					"type" : "i",
+					"data" : -1
+				},
+				"urgency" : {
+					"type" : "s",
+					"data" : "LOW"
+				},
+				"stack_tag" : {
+					"type" : "s",
+					"data" : ""
+				},
+				"urls" : {
+					"type" : "s",
+					"data" : ""
+				}
+			},
+			{
+				"body" : {
+					"type" : "s",
+					"data" : "raop_sink.Sonos-38420BED9F68.local.192.168.1.112.7000"
+				},
+				"message" : {
+					"type" : "s",
+					"data" : "pasystray\n<b>New sink &quot;Lounge&quot;</b>\nraop_sink.Sonos-38420BED9F68.local.192.168.1.112.7000"
+				},
+				"summary" : {
+					"type" : "s",
+					"data" : "New sink \"Lounge\""
+				},
+				"appname" : {
+					"type" : "s",
+					"data" : "pasystray"
+				},
+				"category" : {
+					"type" : "s",
+					"data" : ""
+				},
+				"default_action_name" : {
+					"type" : "s",
+					"data" : "default"
+				},
+				"icon_path" : {
+					"type" : "s",
+					"data" : "/usr/share/icons/breeze-dark/devices/64/audio-card.svg"
+				},
+				"id" : {
+					"type" : "i",
+					"data" : 2
+				},
+				"timestamp" : {
+					"type" : "x",
+					"data" : 33697896
+				},
+				"timeout" : {
+					"type" : "x",
+					"data" : 2000000
+				},
+				"progress" : {
+					"type" : "i",
+					"data" : -1
+				},
+				"urgency" : {
+					"type" : "s",
+					"data" : "LOW"
+				},
+				"stack_tag" : {
+					"type" : "s",
+					"data" : ""
+				},
+				"urls" : {
+					"type" : "s",
+					"data" : ""
+				}
+			}
+		]
+	]
+}

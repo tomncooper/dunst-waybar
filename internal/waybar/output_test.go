@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tcooper/dunst-waybar/internal/config"
+	"github.com/tomncooper/dunst-waybar/internal/config"
 )
 
 func TestNewFormatter(t *testing.T) {

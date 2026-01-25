@@ -12,6 +12,8 @@ This document provides essential information for AI coding agents working on the
 - Configurable icons and formats via JSON config
 - Efficient event-driven updates (no polling)
 - Shows notification state (paused/unpaused) and waiting notification count
+- Interactive notification history browser (`dunst-waybar-history`)
+- Multi-click Waybar integration (pause, history, pop)
 
 ### Technology Stack
 - **Language**: Go 1.25.5
@@ -26,18 +28,22 @@ This document provides essential information for AI coding agents working on the
 ```
 .
 ├── cmd/
-│   └── dunst-waybar/          # Main application entry point
+│   ├── dunst-waybar/           # Main status module entry point
+│   └── dunst-waybar-history/   # History browser entry point
 ├── internal/
-│   ├── config/                # Configuration loading and parsing
-│   ├── dunst/                 # D-Bus client for Dunst interaction
-│   └── waybar/                # Output formatting for Waybar
+│   ├── config/                 # Configuration loading and parsing
+│   ├── dunst/                  # D-Bus client and history fetching
+│   ├── history/                # History formatting
+│   ├── menu/                   # Menu launcher (rofi/wofi/dmenu)
+│   └── waybar/                 # Output formatting for Waybar
 ├── test/
-│   └── integration/           # Integration tests with testcontainers
-├── testdata/                  # Test fixtures and data
-├── examples/                  # Example configuration files
-├── Taskfile.yml               # Task runner configuration
-├── go.mod                     # Go module definition
-└── README.md                  # User documentation
+│   └── integration/            # Integration tests with testcontainers
+├── testdata/                   # Test fixtures and data
+├── examples/                   # Example configuration files
+├── design/                     # Design documents
+├── Taskfile.yml                # Task runner configuration
+├── go.mod                      # Go module definition
+└── README.md                   # User documentation
 ```
 
 ## Building and Running
@@ -53,15 +59,17 @@ This document provides essential information for AI coding agents working on the
 Task is the primary build tool. All common operations are defined in `Taskfile.yml`:
 
 ```bash
-# Build the binary
+# Build both binaries
 task build
 
-# Run the program
+# Run the main status module
 task run
 
 # Clean build artifacts
 task clean
 ```
+
+**Note:** `task build` now builds both `dunst-waybar` and `dunst-waybar-history` binaries.
 
 ### Release Management
 
@@ -100,11 +108,13 @@ See `RELEASE.md` for detailed release process documentation.
 ### Using Go Directly
 
 ```bash
-# Build
+# Build both binaries
 go build -o dunst-waybar ./cmd/dunst-waybar
+go build -o dunst-waybar-history ./cmd/dunst-waybar-history
 
 # Run
 ./dunst-waybar
+./dunst-waybar-history --help
 
 # Clean
 go clean
@@ -113,11 +123,12 @@ go clean
 ### Installation
 
 ```bash
-# Using Task (installs to /usr/local/bin)
+# Using Task (installs both binaries to /usr/local/bin)
 sudo task install
 
 # Manual installation
 sudo install -Dm755 dunst-waybar /usr/local/bin/dunst-waybar
+sudo install -Dm755 dunst-waybar-history /usr/local/bin/dunst-waybar-history
 ```
 
 ## Testing
@@ -216,10 +227,20 @@ Default: `$XDG_CONFIG_HOME/waybar/dunst-waybar.json` or `~/.config/waybar/dunst-
 
 ### Config Schema
 The configuration is defined in `internal/config/` package and includes:
+
+**Main Module:**
 - Icon customization (paused, unpaused, error)
 - Format strings with variables: `{icon}`, `{waiting_count}`
 - Tooltip formats for each state
 - Display options (show-waiting-count, waiting-length-max)
+
+**History Module:**
+- `count` - Number of notifications to show (default: 10)
+- `format` - Format template with variables: `{icon}`, `{summary}`, `{body}`, `{appname}`, `{urgency}`, `{time}`, `{id}`
+- `menu-tool` - Menu tool preference: "auto", "rofi", "wofi", or "dmenu" (default: "auto")
+- `time-format` - "relative" or "absolute" (default: "relative")
+- `max-line-length` - Maximum line length before truncation (default: 100)
+- `truncate-suffix` - Suffix for truncated lines (default: "...")
 
 See `examples/dunst-waybar.json` for a complete example.
 
@@ -233,7 +254,45 @@ See `examples/dunst-waybar.json` for a complete example.
   - `paused` (boolean): Whether notifications are paused
   - `waitingLength` (uint32): Number of queued notifications
 
-The application subscribes to `PropertiesChanged` signals for real-time updates.
+The main application subscribes to `PropertiesChanged` signals for real-time updates.
+
+## Notification History Module
+
+### Overview
+The `dunst-waybar-history` binary provides an interactive notification history browser integrated with Waybar via middle-click.
+
+### Architecture
+- Executes `dunstctl history` and parses JSON output
+- Formats notifications according to configuration
+- Displays in rofi/wofi/dmenu menu for selection
+- On selection: pops notification or executes default action
+
+### Key Components
+- **`internal/dunst/history.go`**: Fetches and parses notification history
+- **`internal/history/formatter.go`**: Formats notifications with template variables
+- **`internal/menu/launcher.go`**: Auto-detects and launches menu tools
+- **`internal/dunst/actions.go`**: Handles notification actions (pop/invoke)
+
+### Menu Tool Detection
+Auto-detection priority: rofi → wofi → dmenu
+- **rofi**: Native Wayland support, most features (preferred)
+- **wofi**: Wayland-native, simpler
+- **dmenu**: X11 only (fallback)
+
+### Waybar Integration
+Add to `~/.config/waybar/config`:
+```json
+{
+  "custom/dunst": {
+    "exec": "/usr/local/bin/dunst-waybar",
+    "return-type": "json",
+    "on-click": "dunstctl set-paused toggle",
+    "on-click-middle": "dunst-waybar-history",
+    "on-click-right": "dunstctl history-pop",
+    "tooltip": true
+  }
+}
+```
 
 ## Output Format
 
@@ -311,15 +370,16 @@ dbus-monitor "type='signal',interface='org.freedesktop.DBus.Properties'"
 
 ## Important Notes for Agents
 
-1. **No Polling**: The application uses D-Bus signals, not polling. Preserve this architecture.
-2. **Single Binary**: The project compiles to a single static binary with no runtime dependencies (except system libs).
-3. **Minimal Output**: The application must output only valid JSON to stdout (Waybar requirement).
-4. **Error Handling**: Gracefully handle Dunst not running (error state with appropriate icon/message).
-5. **Configuration Optional**: The application works with defaults if no config file exists.
-6. **Testing**: Always run unit tests. Integration tests require Docker/Podman.
-7. **Build Tool**: Use Task for consistent builds across environments.
-8. **Releases**: Use GoReleaser for releases - GitHub Actions automates the entire process when tags are pushed.
-9. **Versioning**: The project uses monotonic versioning (v1, v2, v3...) - simpler than semantic versioning.
+1. **Dual Binaries**: The project builds two binaries: `dunst-waybar` (status module) and `dunst-waybar-history` (history browser).
+2. **No Polling**: Both applications use event-driven architecture (D-Bus signals for status, command execution for history).
+3. **Single Config File**: Both binaries share `~/.config/waybar/dunst-waybar.json` with separate sections.
+4. **Minimal Output**: The status module outputs only valid JSON to stdout (Waybar requirement).
+5. **Error Handling**: Gracefully handle Dunst not running, missing menu tools, and empty history.
+6. **Configuration Optional**: Both applications work with defaults if no config file exists.
+7. **Testing**: Always run unit tests. Integration tests require Docker/Podman.
+8. **Build Tool**: Use Task for consistent builds across environments, or Go directly.
+9. **Releases**: Use GoReleaser for releases - GitHub Actions automates the entire process when tags are pushed.
+10. **Versioning**: The project uses monotonic versioning (v1, v2, v3...) - simpler than semantic versioning.
 
 ## GoReleaser Configuration
 

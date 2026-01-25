@@ -49,6 +49,29 @@ func TestDefault(t *testing.T) {
 	if cfg.WaitingLengthMax != 9 {
 		t.Errorf("WaitingLengthMax: got %d, want %d", cfg.WaitingLengthMax, 9)
 	}
+
+	// Test history defaults
+	if cfg.History.Count != 10 {
+		t.Errorf("History.Count: got %d, want %d", cfg.History.Count, 10)
+	}
+	if cfg.History.Format != "{time} {summary}" {
+		t.Errorf("History.Format: got %q, want %q", cfg.History.Format, "{time} {summary}")
+	}
+	if cfg.History.MenuTool != "auto" {
+		t.Errorf("History.MenuTool: got %q, want %q", cfg.History.MenuTool, "auto")
+	}
+	if cfg.History.TimeFormat != "relative" {
+		t.Errorf("History.TimeFormat: got %q, want %q", cfg.History.TimeFormat, "relative")
+	}
+	if cfg.History.MaxLineLength != 100 {
+		t.Errorf("History.MaxLineLength: got %d, want %d", cfg.History.MaxLineLength, 100)
+	}
+	if cfg.History.TruncateSuffix != "..." {
+		t.Errorf("History.TruncateSuffix: got %q, want %q", cfg.History.TruncateSuffix, "...")
+	}
+	if cfg.History.FallbackIconTheme != "Adwaita" {
+		t.Errorf("History.FallbackIconTheme: got %q, want %q", cfg.History.FallbackIconTheme, "Adwaita")
+	}
 }
 
 func TestLoad_ValidFile(t *testing.T) {

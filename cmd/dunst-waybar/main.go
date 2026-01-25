@@ -8,9 +8,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/tcooper/dunst-waybar/internal/config"
-	"github.com/tcooper/dunst-waybar/internal/dunst"
-	"github.com/tcooper/dunst-waybar/internal/waybar"
+	"github.com/tomncooper/dunst-waybar/internal/config"
+	"github.com/tomncooper/dunst-waybar/internal/dunst"
+	"github.com/tomncooper/dunst-waybar/internal/waybar"
 )
 
 var (

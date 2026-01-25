@@ -8,17 +8,29 @@ import (
 
 // Config holds the application configuration
 type Config struct {
-	IconPaused       string `json:"icon-paused"`
-	IconUnpaused     string `json:"icon-unpaused"`
-	IconError        string `json:"icon-error"`
-	FormatPaused     string `json:"format-paused"`
-	FormatUnpaused   string `json:"format-unpaused"`
-	FormatError      string `json:"format-error"`
-	TooltipPaused    string `json:"tooltip-format-paused"`
-	TooltipUnpaused  string `json:"tooltip-format-unpaused"`
-	TooltipError     string `json:"tooltip-format-error"`
-	ShowWaitingCount bool   `json:"show-waiting-count"`
-	WaitingLengthMax int    `json:"waiting-length-max"`
+	IconPaused       string        `json:"icon-paused"`
+	IconUnpaused     string        `json:"icon-unpaused"`
+	IconError        string        `json:"icon-error"`
+	FormatPaused     string        `json:"format-paused"`
+	FormatUnpaused   string        `json:"format-unpaused"`
+	FormatError      string        `json:"format-error"`
+	TooltipPaused    string        `json:"tooltip-format-paused"`
+	TooltipUnpaused  string        `json:"tooltip-format-unpaused"`
+	TooltipError     string        `json:"tooltip-format-error"`
+	ShowWaitingCount bool          `json:"show-waiting-count"`
+	WaitingLengthMax int           `json:"waiting-length-max"`
+	History          HistoryConfig `json:"history"`
+}
+
+// HistoryConfig holds configuration for notification history display
+type HistoryConfig struct {
+	Count             int    `json:"count"`
+	Format            string `json:"format"`
+	MenuTool          string `json:"menu-tool"`
+	TimeFormat        string `json:"time-format"`
+	MaxLineLength     int    `json:"max-line-length"`
+	TruncateSuffix    string `json:"truncate-suffix"`
+	FallbackIconTheme string `json:"fallback-icon-theme"`
 }
 
 // Default returns a Config with default values
@@ -35,6 +47,15 @@ func Default() *Config {
 		TooltipError:     "Dunst is not running",
 		ShowWaitingCount: true,
 		WaitingLengthMax: 9,
+		History: HistoryConfig{
+			Count:             10,
+			Format:            "{time} {summary}",
+			MenuTool:          "auto",
+			TimeFormat:        "relative",
+			MaxLineLength:     100,
+			TruncateSuffix:    "...",
+			FallbackIconTheme: "Adwaita",
+		},
 	}
 }
 

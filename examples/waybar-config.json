@@ -10,6 +10,8 @@
     "exec": "/usr/local/bin/dunst-waybar",
     "return-type": "json",
     "on-click": "dunstctl set-paused toggle",
+    "on-click-middle": "dunst-waybar-history",
+    "on-click-right": "dunstctl history-pop",
     "tooltip": true
   },
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tcooper/dunst-waybar/internal/config"
+	"github.com/tomncooper/dunst-waybar/internal/config"
 )
 
 // State represents the current dunst state

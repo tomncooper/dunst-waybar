@@ -33,6 +33,28 @@ builds:
       - -X main.builtBy=goreleaser
     mod_timestamp: '{{ .CommitTimestamp }}'
 
+  - id: dunst-waybar-history
+    main: ./cmd/dunst-waybar-history
+    binary: dunst-waybar-history
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "6"
+      - "7"
+    ldflags:
+      - -s -w
+      - -X main.versionString={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+      - -X main.builtBy=goreleaser
+    mod_timestamp: '{{ .CommitTimestamp }}'
+
 archives:
   - id: dunst-waybar
     name_template: >-
@@ -56,7 +78,8 @@ nfpms:
     maintainer: Tom Cooper <tomncooper@users.noreply.github.com>
     description: |-
       Custom Waybar module for Dunst notification daemon integration.
-      Provides real-time notification status display in Waybar through D-Bus integration.
+      Provides real-time notification status display and notification history in Waybar through D-Bus integration.
+      Includes dunst-waybar (status module) and dunst-waybar-history (history browser).
     license: MIT
     formats:
       - rpm
@@ -71,6 +94,7 @@ nfpms:
     # Recommended packages
     recommends:
       - waybar
+      - rofi
     
     # Files to include in the package
     contents:

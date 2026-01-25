@@ -1,4 +1,4 @@
-module github.com/tcooper/dunst-waybar
+module github.com/tomncooper/dunst-waybar
 
 go 1.25.5
 
